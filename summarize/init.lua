@@ -13,6 +13,7 @@
 --
 -- Use: require("summarize").start()   or   require("summarize").start({ hotkey = { {"cmd","alt"}, "s" } })
 --      require("summarize").start({ capsLockHyper = true })   also makes Caps Lock a Hyper key (Caps Lock+2)
+--      Turns on "Launch Hammerspoon at login" so it survives restarts; start({ autoLaunch = false }) to opt out.
 
 local M = {}
 
@@ -997,6 +998,9 @@ end
 
 function M.start(opts)
   opts = opts or {}
+  -- Summarize only works while Hammerspoon runs, and Hammerspoon doesn't start at login by default: turn that on
+  -- (start({ autoLaunch = false }) to leave it alone).
+  if opts.autoLaunch ~= false and hs.autoLaunch and not hs.autoLaunch() then hs.autoLaunch(true) end
   local hk = opts.hotkey or { { "cmd", "alt", "ctrl", "shift" }, "2" }
   if M.hotkey then M.hotkey:delete() end
   M.hotkey = hs.hotkey.bind(hk[1], hk[2], function() M.run() end)

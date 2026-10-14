@@ -40,6 +40,7 @@ In the answer panel you can ask follow-ups, copy as Markdown, and select part of
 - **Streaming:** `curl` in the background (Hammerspoon's HTTP client can't stream). The API key goes in a private temp file, never on the command line.
 - **Article detection:** `extract.js` runs in the Chrome tab through AppleScript and scores containers by paragraph text, a small Readability. A page needs 250+ words in 4+ paragraphs to count as an article.
 - **Caps Lock as Hyper** (optional): `hidutil` maps Caps Lock to F18, re-applied each time Hammerspoon starts. An event tap then adds ⌘⌥⌃⇧ to keys pressed while it's held. It does nothing if another remapping is already set. To undo, remove the option and run `hidutil property --set '{"UserKeyMapping":[]}'`.
+- **Starts at login:** `start()` turns on Hammerspoon's "Launch at login", since Summarize only works while it runs. Opt out with `start({ autoLaunch = false })`.
 - **Privacy:** your text or screenshot goes only to OpenRouter. The log (`~/.hammerspoon/summarize.log`) records timings, modes and sizes, never your text.
 
 ## License
