@@ -123,12 +123,19 @@ local function busy(on)
 end
 
 -- Copy the selection, then call back with it ("" when nothing is selected) and the saved clipboard.
+local BROWSERS = { ["com.google.Chrome"] = true, ["com.google.Chrome.beta"] = true, ["company.thebrowser.Browser"] = true,
+  ["com.apple.Safari"] = true, ["org.mozilla.firefox"] = true, ["com.brave.Browser"] = true, ["com.microsoft.edgemac"] = true }
+
 local function grabSelection(cb, focused)
   local saved = hs.pasteboard.getContents()
   -- Ask the app first: instant, and no clipboard round-trip. Only apps that don't say get the
   -- ⌘C fallback (which has to wait to see whether anything landed).
   local ax = focused and focused:attributeValue("AXSelectedText")
-  if type(ax) == "string" then return cb(ax, saved) end
+  -- Web editors that draw their own text (Google Docs, Sheets, Slides…) focus a hidden, always-empty text area,
+  -- so in a browser an empty answer can't be trusted: copy instead. Elsewhere "" really means nothing selected.
+  local front = hs.application.frontmostApplication()
+  local browser = front and BROWSERS[front:bundleID() or ""]
+  if type(ax) == "string" and (ax ~= "" or not browser) then return cb(ax, saved) end
   local before = hs.pasteboard.changeCount()
   hs.eventtap.keyStroke({ "cmd" }, "c", 0)
   local tries = 0
